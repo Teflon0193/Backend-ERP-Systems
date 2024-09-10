@@ -21,8 +21,7 @@ public class EnvironmentalMetricController {
 
     @GetMapping("/{id}")
     public ResponseEntity<EnvironmentalMetric> getEnvironmentalMetricById(@PathVariable Long id) {
-        EnvironmentalMetric environmentalMetric = environmentalMetricService.getEnvironmentalMetricById(id)
-                .orElseThrow(() -> new RuntimeException("EnvironmentalMetric not found for this id :: " + id));
+        EnvironmentalMetric environmentalMetric = environmentalMetricService.getEnvironmentalMetricById(id);
         return ResponseEntity.ok().body(environmentalMetric);
     }
 

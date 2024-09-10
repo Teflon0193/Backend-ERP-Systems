@@ -24,8 +24,8 @@ public class AccountsReceivableController {
     // Retrieve a specific accounts receivable entry by ID
     @GetMapping("/{id}")
     public ResponseEntity<AccountsReceivable> getAccountsReceivableById(@PathVariable Long id) {
-        Optional<AccountsReceivable> accountsReceivable = accountsReceivableService.getAccountsReceivableById(id);
-        return accountsReceivable.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        AccountsReceivable accountsReceivable = accountsReceivableService.getAccountsReceivableById(id);
+        return ResponseEntity.ok().body(accountsReceivable);
     }
 
     // Create a new accounts receivable entry

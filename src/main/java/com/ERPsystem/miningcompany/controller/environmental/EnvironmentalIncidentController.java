@@ -21,8 +21,7 @@ public class EnvironmentalIncidentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<EnvironmentalIncident> getEnvironmentalIncidentById(@PathVariable Long id) {
-        EnvironmentalIncident environmentalIncident = environmentalIncidentService.getEnvironmentalIncidentById(id)
-                .orElseThrow(() -> new RuntimeException("EnvironmentalIncident not found for this id :: " + id));
+        EnvironmentalIncident environmentalIncident = environmentalIncidentService.getEnvironmentalIncidentById(id);
         return ResponseEntity.ok().body(environmentalIncident);
     }
 

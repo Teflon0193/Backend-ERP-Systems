@@ -24,8 +24,8 @@ public class AssetController {
     // Retrieve a specific asset by ID
     @GetMapping("/{id}")
     public ResponseEntity<Asset> getAssetById(@PathVariable Long id) {
-        Optional<Asset> asset = assetService.getAssetById(id);
-        return asset.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        Asset asset = assetService.getAssetById(id);
+        return ResponseEntity.ok().body(asset);
     }
 
     // Create a new asset

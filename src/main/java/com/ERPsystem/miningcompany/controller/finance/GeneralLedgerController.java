@@ -24,8 +24,8 @@ public class GeneralLedgerController {
     // Retrieve a specific general ledger by ID
     @GetMapping("/{id}")
     public ResponseEntity<GeneralLedger> getGeneralLedgerById(@PathVariable Long id) {
-        Optional<GeneralLedger> generalLedger = generalLedgerService.getGeneralLedgerById(id);
-        return generalLedger.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        GeneralLedger generalLedger = generalLedgerService.getGeneralLedgerById(id);
+        return ResponseEntity.ok(generalLedger);
     }
 
     // Create a new general ledger

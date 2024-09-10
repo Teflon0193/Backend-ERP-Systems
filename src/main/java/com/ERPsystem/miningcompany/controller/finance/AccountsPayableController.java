@@ -24,8 +24,8 @@ public class AccountsPayableController {
     // Retrieve a specific accounts payable entry by ID
     @GetMapping("/{id}")
     public ResponseEntity<AccountsPayable> getAccountsPayableById(@PathVariable Long id) {
-        Optional<AccountsPayable> accountsPayable = accountsPayableService.getAccountsPayableById(id);
-        return accountsPayable.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        AccountsPayable accountsPayable = accountsPayableService.getAccountsPayableById(id);
+        return ResponseEntity.ok().body(accountsPayable);
     }
 
     // Create a new accounts payable entry

@@ -2,6 +2,7 @@ package com.ERPsystem.miningcompany.service.finance;
 
 import com.ERPsystem.miningcompany.Entity.finance.GeneralLedger;
 import com.ERPsystem.miningcompany.Repository.finance.GeneralLedgerRepository;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +18,9 @@ public class GeneralLedgerService {
         return generalLedgerRepository.findAll();
     }
 
-    public Optional<GeneralLedger> getGeneralLedgerById(Long id) {
-        return generalLedgerRepository.findById(id);
+    public GeneralLedger getGeneralLedgerById(Long id) {
+        return generalLedgerRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("General Ledger not found with id " + id));
     }
 
     public GeneralLedger saveGeneralLedger(GeneralLedger generalLedger) {
@@ -27,14 +29,18 @@ public class GeneralLedgerService {
 
     public GeneralLedger updateGeneralLedger(Long id, GeneralLedger generalLedgerDetails) {
         GeneralLedger existingGeneralLedger = generalLedgerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("General Ledger not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("General Ledger not found with id " + id));
+
         existingGeneralLedger.setAccountName(generalLedgerDetails.getAccountName());
         existingGeneralLedger.setAccountType(generalLedgerDetails.getAccountType());
         existingGeneralLedger.setBalance(generalLedgerDetails.getBalance());
+
         return generalLedgerRepository.save(existingGeneralLedger);
     }
 
     public void deleteGeneralLedger(Long id) {
-        generalLedgerRepository.deleteById(id);
+        GeneralLedger generalLedger = generalLedgerRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("General Ledger not found with id " + id));
+        generalLedgerRepository.delete(generalLedger);
     }
 }

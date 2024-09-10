@@ -2,6 +2,7 @@ package com.ERPsystem.miningcompany.service.finance;
 
 import com.ERPsystem.miningcompany.Entity.finance.AccountsReceivable;
 import com.ERPsystem.miningcompany.Repository.finance.AccountsReceivableRepository;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +18,9 @@ public class AccountsReceivableService {
         return accountsReceivableRepository.findAll();
     }
 
-    public Optional<AccountsReceivable> getAccountsReceivableById(Long id) {
-        return accountsReceivableRepository.findById(id);
+    public AccountsReceivable getAccountsReceivableById(Long id) {
+        return accountsReceivableRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("AccountsReceivable not found with id " + id));
     }
 
     public AccountsReceivable saveAccountsReceivable(AccountsReceivable accountsReceivable) {
@@ -27,14 +29,19 @@ public class AccountsReceivableService {
 
     public AccountsReceivable updateAccountsReceivable(Long id, AccountsReceivable accountsReceivableDetails) {
         AccountsReceivable existingAccountsReceivable = accountsReceivableRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("AccountsReceivable not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("AccountsReceivable not found with id " + id));
+
         existingAccountsReceivable.setCustomerName(accountsReceivableDetails.getCustomerName());
         existingAccountsReceivable.setAmountDue(accountsReceivableDetails.getAmountDue());
         existingAccountsReceivable.setDueDate(accountsReceivableDetails.getDueDate());
+
         return accountsReceivableRepository.save(existingAccountsReceivable);
     }
 
     public void deleteAccountsReceivable(Long id) {
-        accountsReceivableRepository.deleteById(id);
+        AccountsReceivable accountsReceivable = accountsReceivableRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("AccountsReceivable not found with id " + id));
+
+        accountsReceivableRepository.delete(accountsReceivable);
     }
 }

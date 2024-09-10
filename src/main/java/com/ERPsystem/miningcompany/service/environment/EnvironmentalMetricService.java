@@ -2,6 +2,7 @@ package com.ERPsystem.miningcompany.service.environment;
 
 import com.ERPsystem.miningcompany.Entity.environmental.EnvironmentalMetric;
 import com.ERPsystem.miningcompany.Repository.environmental.EnvironmentalMetricRepository;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +18,9 @@ public class EnvironmentalMetricService {
         return environmentalMetricRepository.findAll();
     }
 
-    public Optional<EnvironmentalMetric> getEnvironmentalMetricById(Long id) {
-        return environmentalMetricRepository.findById(id);
+    public EnvironmentalMetric getEnvironmentalMetricById(Long id) {
+        return environmentalMetricRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("EnvironmentalMetric not found for this id :: " + id));
     }
 
     public EnvironmentalMetric createEnvironmentalMetric(EnvironmentalMetric environmentalMetric) {
@@ -27,7 +29,7 @@ public class EnvironmentalMetricService {
 
     public EnvironmentalMetric updateEnvironmentalMetric(Long id, EnvironmentalMetric environmentalMetricDetails) {
         EnvironmentalMetric environmentalMetric = environmentalMetricRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("EnvironmentalMetric not found for this id :: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("EnvironmentalMetric not found for this id :: " + id));
 
         environmentalMetric.setMetricName(environmentalMetricDetails.getMetricName());
         environmentalMetric.setValue(environmentalMetricDetails.getValue());
@@ -39,7 +41,7 @@ public class EnvironmentalMetricService {
 
     public void deleteEnvironmentalMetric(Long id) {
         EnvironmentalMetric environmentalMetric = environmentalMetricRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("EnvironmentalMetric not found for this id :: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("EnvironmentalMetric not found for this id :: " + id));
 
         environmentalMetricRepository.delete(environmentalMetric);
     }

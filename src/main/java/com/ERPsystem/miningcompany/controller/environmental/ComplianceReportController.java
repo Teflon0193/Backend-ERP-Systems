@@ -21,8 +21,7 @@ public class ComplianceReportController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ComplianceReport> getComplianceReportById(@PathVariable Long id) {
-        ComplianceReport complianceReport = complianceReportService.getComplianceReportById(id)
-                .orElseThrow(() -> new RuntimeException("ComplianceReport not found for this id :: " + id));
+        ComplianceReport complianceReport = complianceReportService.getComplianceReportById(id);
         return ResponseEntity.ok().body(complianceReport);
     }
 
