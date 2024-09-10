@@ -2,6 +2,7 @@ package com.ERPsystem.miningcompany.service.hr;
 
 import com.ERPsystem.miningcompany.Entity.hr.SafetyTraining;
 import com.ERPsystem.miningcompany.Repository.hr.SafetyTrainingRepository;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +22,9 @@ public class SafetyTrainingService {
         return safetyTrainingRepository.findAll();
     }
 
-    public Optional<SafetyTraining> getSafetyTrainingById(Long id) {
-        return safetyTrainingRepository.findById(id);
+    public SafetyTraining getSafetyTrainingById(Long id) {
+        return safetyTrainingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("SafetyTraining not found with id " + id));
     }
 
     public SafetyTraining updateSafetyTraining(Long id, SafetyTraining safetyTrainingDetails) {
@@ -30,11 +32,15 @@ public class SafetyTrainingService {
             safetyTrainingDetails.setId(id);
             return safetyTrainingRepository.save(safetyTrainingDetails);
         } else {
-            return null;
+            throw new ResourceNotFoundException("SafetyTraining not found with id " + id);
         }
     }
 
     public void deleteSafetyTraining(Long id) {
-        safetyTrainingRepository.deleteById(id);
+        if (safetyTrainingRepository.existsById(id)) {
+            safetyTrainingRepository.deleteById(id);
+        } else {
+            throw new ResourceNotFoundException("SafetyTraining not found with id " + id);
+        }
     }
 }

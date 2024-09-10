@@ -2,6 +2,7 @@ package com.ERPsystem.miningcompany.service.production;
 
 import com.ERPsystem.miningcompany.Entity.production.MinePlan;
 import com.ERPsystem.miningcompany.Repository.production.MinePlanRepository;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +17,9 @@ public class MinePlanService {
         return minePlanRepository.save(minePlan);
     }
 
-    public Optional<MinePlan> getMinePlanById(Long id) {
-        return minePlanRepository.findById(id);
+    public MinePlan getMinePlanById(Long id) {
+        return minePlanRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Mine plan not found with id " + id));
     }
 
     public Iterable<MinePlan> getAllMinePlans() {
@@ -29,11 +31,16 @@ public class MinePlanService {
             updatedMinePlan.setId(id);
             return minePlanRepository.save(updatedMinePlan);
         } else {
-            return null;
+            throw new ResourceNotFoundException("Mine plan not found with id " + id);
         }
     }
+
     public void deleteMinePlan(Long id) {
-        minePlanRepository.deleteById(id);
+        if (minePlanRepository.existsById(id)) {
+            minePlanRepository.deleteById(id);
+        } else {
+            throw new ResourceNotFoundException("Mine plan not found with id " + id);
+        }
     }
 
 

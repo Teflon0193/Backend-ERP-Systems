@@ -2,6 +2,7 @@ package com.ERPsystem.miningcompany.service.hr;
 
 import com.ERPsystem.miningcompany.Entity.hr.JobPosting;
 import com.ERPsystem.miningcompany.Repository.hr.JobPostingRepository;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +22,9 @@ public class JobPostingService {
         return jobPostingRepository.findAll();
     }
 
-    public Optional<JobPosting> getJobPostingById(Long id) {
-        return jobPostingRepository.findById(id);
+    public JobPosting getJobPostingById(Long id) {
+        return jobPostingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("JobPosting not found with id " + id));
     }
 
     public JobPosting updateJobPosting(Long id, JobPosting jobPostingDetails) {
@@ -30,12 +32,16 @@ public class JobPostingService {
             jobPostingDetails.setId(id);
             return jobPostingRepository.save(jobPostingDetails);
         } else {
-            return null;
+            throw new ResourceNotFoundException("JobPosting not found with id " + id);
         }
     }
 
     public void deleteJobPosting(Long id) {
-        jobPostingRepository.deleteById(id);
+        if (jobPostingRepository.existsById(id)) {
+            jobPostingRepository.deleteById(id);
+        } else {
+            throw new ResourceNotFoundException("JobPosting not found with id " + id);
+        }
     }
 }
 

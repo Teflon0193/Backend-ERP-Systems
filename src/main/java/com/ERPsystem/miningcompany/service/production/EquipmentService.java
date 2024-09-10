@@ -2,6 +2,7 @@ package com.ERPsystem.miningcompany.service.production;
 
 import com.ERPsystem.miningcompany.Entity.production.Equipment;
 import com.ERPsystem.miningcompany.Repository.production.EquipmentRepository;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +22,9 @@ public class EquipmentService {
         return equipmentRepository.findAll();
     }
 
-    public Optional<Equipment> getEquipmentById(Long id) {
-        return equipmentRepository.findById(id);
+    public Equipment getEquipmentById(Long id) {
+        return equipmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Equipment not found with id " + id));
     }
 
     public Equipment updateEquipment(Long id, Equipment equipmentDetails) {
@@ -30,11 +32,15 @@ public class EquipmentService {
             equipmentDetails.setId(id);
             return equipmentRepository.save(equipmentDetails);
         } else {
-            return null;
+            throw new ResourceNotFoundException("Equipment not found with id " + id);
         }
     }
 
     public void deleteEquipment(Long id) {
-        equipmentRepository.deleteById(id);
+        if (equipmentRepository.existsById(id)) {
+            equipmentRepository.deleteById(id);
+        } else {
+            throw new ResourceNotFoundException("Equipment not found with id " + id);
+        }
     }
 }

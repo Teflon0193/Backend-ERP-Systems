@@ -2,6 +2,7 @@ package com.ERPsystem.miningcompany.service.hr;
 
 import com.ERPsystem.miningcompany.Entity.hr.Attendance;
 import com.ERPsystem.miningcompany.Repository.hr.AttendanceRepository;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +18,9 @@ public class AttendanceService {
         return attendanceRepository.findAll();
     }
 
-    public Optional<Attendance> getAttendanceById(Long id) {
-        return attendanceRepository.findById(id);
+    public Attendance getAttendanceById(Long id) {
+        return attendanceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Attendance not found for this id :: " + id));
     }
 
     public Attendance createAttendance(Attendance attendance) {
@@ -27,7 +29,7 @@ public class AttendanceService {
 
     public Attendance updateAttendance(Long id, Attendance attendanceDetails) {
         Attendance attendance = attendanceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Attendance not found for this id :: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Attendance not found for this id :: " + id));
 
         attendance.setEmployeeId(attendanceDetails.getEmployeeId());
         attendance.setDate(attendanceDetails.getDate());
@@ -39,7 +41,7 @@ public class AttendanceService {
 
     public void deleteAttendance(Long id) {
         Attendance attendance = attendanceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Attendance not found for this id :: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Attendance not found for this id :: " + id));
 
         attendanceRepository.delete(attendance);
     }

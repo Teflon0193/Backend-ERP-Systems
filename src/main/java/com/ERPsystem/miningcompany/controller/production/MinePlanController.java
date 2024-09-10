@@ -1,6 +1,7 @@
 package com.ERPsystem.miningcompany.controller.production;
 
 import com.ERPsystem.miningcompany.Entity.production.MinePlan;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import com.ERPsystem.miningcompany.service.production.MinePlanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +18,17 @@ public class MinePlanController {
     @PostMapping
     public ResponseEntity<MinePlan> createMinePlan(@RequestBody MinePlan minePlan) {
         MinePlan createdMinePlan = minePlanService.createMinePlan(minePlan);
-        return ResponseEntity.ok(createdMinePlan);
+        return ResponseEntity.status(201).body(createdMinePlan);  // Return status 201 (Created)
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MinePlan> getMinePlanById(@PathVariable Long id) {
-        Optional<MinePlan> minePlan = minePlanService.getMinePlanById(id);
-        return minePlan.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> getMinePlanById(@PathVariable Long id) {
+        try {
+            MinePlan minePlan = minePlanService.getMinePlanById(id);
+            return ResponseEntity.ok(minePlan);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send not found message
+        }
     }
 
     @GetMapping
@@ -32,19 +37,23 @@ public class MinePlanController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MinePlan> updateMinePlan(@PathVariable Long id, @RequestBody MinePlan updatedMinePlan) {
-        MinePlan minePlan = minePlanService.updateMinePlan(id, updatedMinePlan);
-        if (minePlan != null) {
+    public ResponseEntity<?> updateMinePlan(@PathVariable Long id, @RequestBody MinePlan updatedMinePlan) {
+        try {
+            MinePlan minePlan = minePlanService.updateMinePlan(id, updatedMinePlan);
             return ResponseEntity.ok(minePlan);
-        } else {
-            return ResponseEntity.notFound().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send not found message
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMinePlan(@PathVariable Long id) {
-        minePlanService.deleteMinePlan(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteMinePlan(@PathVariable Long id) {
+        try {
+            minePlanService.deleteMinePlan(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send not found message
+        }
     }
 
 

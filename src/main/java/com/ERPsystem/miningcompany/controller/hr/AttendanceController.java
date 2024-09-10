@@ -1,6 +1,7 @@
 package com.ERPsystem.miningcompany.controller.hr;
 
 import com.ERPsystem.miningcompany.Entity.hr.Attendance;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import com.ERPsystem.miningcompany.service.hr.AttendanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +21,13 @@ public class AttendanceController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Attendance> getAttendanceById(@PathVariable Long id) {
-        Attendance attendance = attendanceService.getAttendanceById(id)
-                .orElseThrow(() -> new RuntimeException("Attendance not found for this id :: " + id));
-        return ResponseEntity.ok().body(attendance);
+    public ResponseEntity<?> getAttendanceById(@PathVariable Long id) {
+        try {
+            Attendance attendance = attendanceService.getAttendanceById(id);
+            return ResponseEntity.ok(attendance);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send the exception message
+        }
     }
 
     @PostMapping
@@ -32,15 +36,25 @@ public class AttendanceController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Attendance> updateAttendance(@PathVariable Long id, @RequestBody Attendance attendanceDetails) {
-        Attendance updatedAttendance = attendanceService.updateAttendance(id, attendanceDetails);
-        return ResponseEntity.ok(updatedAttendance);
+    public ResponseEntity<?> updateAttendance(@PathVariable Long id, @RequestBody Attendance attendanceDetails) {
+        try {
+            Attendance updatedAttendance = attendanceService.updateAttendance(id, attendanceDetails);
+            return ResponseEntity.ok(updatedAttendance);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send the exception message
+        }
     }
 
+
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAttendance(@PathVariable Long id) {
-        attendanceService.deleteAttendance(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteAttendance(@PathVariable Long id) {
+        try {
+            attendanceService.deleteAttendance(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send the exception message
+        }
     }
 
 }

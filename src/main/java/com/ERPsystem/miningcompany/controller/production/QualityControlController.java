@@ -1,6 +1,7 @@
 package com.ERPsystem.miningcompany.controller.production;
 
 import com.ERPsystem.miningcompany.Entity.production.QualityControl;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import com.ERPsystem.miningcompany.service.production.QualityControlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +18,17 @@ public class QualityControlController {
     @PostMapping
     public ResponseEntity<QualityControl> createQualityControl(@RequestBody QualityControl qualityControl) {
         QualityControl createdQualityControl = qualityControlService.createQualityControl(qualityControl);
-        return ResponseEntity.ok(createdQualityControl);
+        return ResponseEntity.status(201).body(createdQualityControl);  // Return status 201 (Created)
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<QualityControl> getQualityControlById(@PathVariable Long id) {
-        Optional<QualityControl> qualityControl = qualityControlService.getQualityControlById(id);
-        return qualityControl.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> getQualityControlById(@PathVariable Long id) {
+        try {
+            QualityControl qualityControl = qualityControlService.getQualityControlById(id);
+            return ResponseEntity.ok(qualityControl);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send not found message
+        }
     }
 
     @GetMapping
@@ -32,18 +37,22 @@ public class QualityControlController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<QualityControl> updateQualityControl(@PathVariable Long id, @RequestBody QualityControl updatedQualityControl) {
-        QualityControl qualityControl = qualityControlService.updateQualityControl(id, updatedQualityControl);
-        if (qualityControl != null) {
+    public ResponseEntity<?> updateQualityControl(@PathVariable Long id, @RequestBody QualityControl updatedQualityControl) {
+        try {
+            QualityControl qualityControl = qualityControlService.updateQualityControl(id, updatedQualityControl);
             return ResponseEntity.ok(qualityControl);
-        } else {
-            return ResponseEntity.notFound().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send not found message
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteQualityControl(@PathVariable Long id) {
-        qualityControlService.deleteQualityControl(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteQualityControl(@PathVariable Long id) {
+        try {
+            qualityControlService.deleteQualityControl(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send not found message
+        }
     }
 }

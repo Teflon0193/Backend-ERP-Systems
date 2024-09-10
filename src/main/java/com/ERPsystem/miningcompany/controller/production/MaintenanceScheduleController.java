@@ -1,6 +1,7 @@
 package com.ERPsystem.miningcompany.controller.production;
 
 import com.ERPsystem.miningcompany.Entity.production.MaintenanceSchedule;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import com.ERPsystem.miningcompany.service.production.MaintenanceScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,36 +19,42 @@ public class MaintenanceScheduleController {
     @PostMapping
     public ResponseEntity<MaintenanceSchedule> createMaintenanceSchedule(@RequestBody MaintenanceSchedule maintenanceSchedule) {
         MaintenanceSchedule createdSchedule = maintenanceScheduleService.createMaintenanceSchedule(maintenanceSchedule);
-        return ResponseEntity.ok(createdSchedule);
+        return ResponseEntity.status(201).body(createdSchedule);  // Created status with schedule
     }
 
     @GetMapping
     public ResponseEntity<List<MaintenanceSchedule>> getAllMaintenanceSchedules() {
         List<MaintenanceSchedule> schedules = maintenanceScheduleService.getAllMaintenanceSchedules();
-        return ResponseEntity.ok(schedules);
+        return ResponseEntity.ok(schedules);  // OK status with schedule list
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MaintenanceSchedule> getMaintenanceScheduleById(@PathVariable Long id) {
-        Optional<MaintenanceSchedule> schedule = maintenanceScheduleService.getMaintenanceScheduleById(id);
-        if (schedule.isPresent()) {
-            return ResponseEntity.ok(schedule.get());
+    public ResponseEntity<?> getMaintenanceScheduleById(@PathVariable Long id) {
+        try {
+            MaintenanceSchedule schedule = maintenanceScheduleService.getMaintenanceScheduleById(id);
+            return ResponseEntity.ok(schedule);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send exception message
         }
-        return ResponseEntity.notFound().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MaintenanceSchedule> updateMaintenanceSchedule(@PathVariable Long id, @RequestBody MaintenanceSchedule updatedSchedule) {
-        MaintenanceSchedule schedule = maintenanceScheduleService.updateMaintenanceSchedule(id, updatedSchedule);
-        if (schedule != null) {
+    public ResponseEntity<?> updateMaintenanceSchedule(@PathVariable Long id, @RequestBody MaintenanceSchedule updatedSchedule) {
+        try {
+            MaintenanceSchedule schedule = maintenanceScheduleService.updateMaintenanceSchedule(id, updatedSchedule);
             return ResponseEntity.ok(schedule);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send exception message
         }
-        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMaintenanceSchedule(@PathVariable Long id) {
-        maintenanceScheduleService.deleteMaintenanceSchedule(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteMaintenanceSchedule(@PathVariable Long id) {
+        try {
+            maintenanceScheduleService.deleteMaintenanceSchedule(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send exception message
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.ERPsystem.miningcompany.controller.hr;
 
 import com.ERPsystem.miningcompany.Entity.hr.Applicant;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import com.ERPsystem.miningcompany.service.hr.ApplicantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +21,13 @@ public class ApplicantController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Applicant> getApplicantById(@PathVariable Long id) {
-        Applicant applicant = applicantService.getApplicantById(id)
-                .orElseThrow(() -> new RuntimeException("Applicant not found for this id :: " + id));
-        return ResponseEntity.ok().body(applicant);
+    public ResponseEntity<?> getApplicantById(@PathVariable Long id) {
+        try {
+            Applicant applicant = applicantService.getApplicantById(id);
+            return ResponseEntity.ok(applicant);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send the exception message
+        }
     }
 
     @PostMapping

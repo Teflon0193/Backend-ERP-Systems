@@ -1,6 +1,7 @@
 package com.ERPsystem.miningcompany.controller.production;
 
 import com.ERPsystem.miningcompany.Entity.production.Equipment;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import com.ERPsystem.miningcompany.service.production.EquipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,31 +20,43 @@ public class EquipmentController {
     @PostMapping
     public ResponseEntity<Equipment> createEquipment(@RequestBody Equipment equipment) {
         Equipment createdEquipment = equipmentService.createEquipment(equipment);
-        return new ResponseEntity<>(createdEquipment, HttpStatus.CREATED);
+        return ResponseEntity.status(201).body(createdEquipment);  // Created status with equipment
     }
 
     @GetMapping
     public ResponseEntity<List<Equipment>> getAllEquipment() {
         List<Equipment> equipmentList = equipmentService.getAllEquipment();
-        return new ResponseEntity<>(equipmentList, HttpStatus.OK);
+        return ResponseEntity.ok(equipmentList);  // OK status with equipment list
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Equipment> getEquipmentById(@PathVariable Long id) {
-        Optional<Equipment> equipment = equipmentService.getEquipmentById(id);
-        return equipment.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> getEquipmentById(@PathVariable Long id) {
+        try {
+            Equipment equipment = equipmentService.getEquipmentById(id);
+            return ResponseEntity.ok(equipment);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send exception message
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Equipment> updateEquipment(@PathVariable Long id, @RequestBody Equipment equipmentDetails) {
-        Equipment updatedEquipment = equipmentService.updateEquipment(id, equipmentDetails);
-        return updatedEquipment != null ? ResponseEntity.ok(updatedEquipment) : ResponseEntity.notFound().build();
+    public ResponseEntity<?> updateEquipment(@PathVariable Long id, @RequestBody Equipment equipmentDetails) {
+        try {
+            Equipment updatedEquipment = equipmentService.updateEquipment(id, equipmentDetails);
+            return ResponseEntity.ok(updatedEquipment);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send exception message
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEquipment(@PathVariable Long id) {
-        equipmentService.deleteEquipment(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteEquipment(@PathVariable Long id) {
+        try {
+            equipmentService.deleteEquipment(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send exception message
+        }
     }
 
 

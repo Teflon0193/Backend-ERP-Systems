@@ -2,6 +2,7 @@ package com.ERPsystem.miningcompany.service.hr;
 
 import com.ERPsystem.miningcompany.Entity.hr.Payroll;
 import com.ERPsystem.miningcompany.Repository.hr.PayrollRepository;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +20,9 @@ public class PayrollService {
     public List<Payroll> getAllPayrolls() {
         return payrollRepository.findAll();
     }
-    public Optional<Payroll> getPayrollById(Long id) {
-        return payrollRepository.findById(id);
+    public Payroll getPayrollById(Long id) {
+        return payrollRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Payroll not found with id " + id));
     }
 
     public Payroll updatePayroll(Long id, Payroll payrollDetails) {
@@ -28,11 +30,15 @@ public class PayrollService {
             payrollDetails.setId(id);
             return payrollRepository.save(payrollDetails);
         } else {
-            return null;
+            throw new ResourceNotFoundException("Payroll not found with id " + id);
         }
     }
 
     public void deletePayroll(Long id) {
-        payrollRepository.deleteById(id);
+        if (payrollRepository.existsById(id)) {
+            payrollRepository.deleteById(id);
+        } else {
+            throw new ResourceNotFoundException("Payroll not found with id " + id);
+        }
     }
 }

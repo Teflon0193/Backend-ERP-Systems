@@ -2,6 +2,7 @@ package com.ERPsystem.miningcompany.service.hr;
 
 import com.ERPsystem.miningcompany.Entity.hr.Employee;
 import com.ERPsystem.miningcompany.Repository.hr.EmployeeRepository;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +25,9 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
 
-    public Optional<Employee> getEmployeeById(Long id) {
-        return employeeRepository.findById(id);
+    public Employee getEmployeeById(Long id) {
+        return employeeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id " + id));
     }
 
     public Employee updateEmployee(Long id, Employee employeeDetails) {
@@ -33,11 +35,15 @@ public class EmployeeService {
             employeeDetails.setId(id);
             return employeeRepository.save(employeeDetails);
         } else {
-            return null;
+            throw new ResourceNotFoundException("Employee not found with id " + id);
         }
     }
 
     public void deleteEmployee(Long id) {
-        employeeRepository.deleteById(id);
+        if (employeeRepository.existsById(id)) {
+            employeeRepository.deleteById(id);
+        } else {
+            throw new ResourceNotFoundException("Employee not found with id " + id);
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.ERPsystem.miningcompany.controller.hr;
 
 import com.ERPsystem.miningcompany.Entity.hr.SafetyTraining;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import com.ERPsystem.miningcompany.service.hr.SafetyTrainingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,31 +20,43 @@ public class SafetyTrainingController {
     @PostMapping
     public ResponseEntity<SafetyTraining> createSafetyTraining(@RequestBody SafetyTraining safetyTraining) {
         SafetyTraining createdSafetyTraining = safetyTrainingService.createSafetyTraining(safetyTraining);
-        return new ResponseEntity<>(createdSafetyTraining, HttpStatus.CREATED);
+        return ResponseEntity.status(201).body(createdSafetyTraining);  // Created status with safetyTraining
     }
 
     @GetMapping
     public ResponseEntity<List<SafetyTraining>> getAllSafetyTrainings() {
         List<SafetyTraining> safetyTrainings = safetyTrainingService.getAllSafetyTrainings();
-        return new ResponseEntity<>(safetyTrainings, HttpStatus.OK);
+        return ResponseEntity.ok(safetyTrainings);  // OK status with safetyTrainings list
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SafetyTraining> getSafetyTrainingById(@PathVariable Long id) {
-        Optional<SafetyTraining> safetyTraining = safetyTrainingService.getSafetyTrainingById(id);
-        return safetyTraining.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> getSafetyTrainingById(@PathVariable Long id) {
+        try {
+            SafetyTraining safetyTraining = safetyTrainingService.getSafetyTrainingById(id);
+            return ResponseEntity.ok(safetyTraining);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send exception message
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SafetyTraining> updateSafetyTraining(@PathVariable Long id, @RequestBody SafetyTraining safetyTrainingDetails) {
-        SafetyTraining updatedSafetyTraining = safetyTrainingService.updateSafetyTraining(id, safetyTrainingDetails);
-        return updatedSafetyTraining != null ? ResponseEntity.ok(updatedSafetyTraining) : ResponseEntity.notFound().build();
+    public ResponseEntity<?> updateSafetyTraining(@PathVariable Long id, @RequestBody SafetyTraining safetyTrainingDetails) {
+        try {
+            SafetyTraining updatedSafetyTraining = safetyTrainingService.updateSafetyTraining(id, safetyTrainingDetails);
+            return ResponseEntity.ok(updatedSafetyTraining);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send exception message
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSafetyTraining(@PathVariable Long id) {
-        safetyTrainingService.deleteSafetyTraining(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteSafetyTraining(@PathVariable Long id) {
+        try {
+            safetyTrainingService.deleteSafetyTraining(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send exception message
+        }
     }
 
 }

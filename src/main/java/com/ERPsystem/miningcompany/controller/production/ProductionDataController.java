@@ -1,6 +1,7 @@
 package com.ERPsystem.miningcompany.controller.production;
 
 import com.ERPsystem.miningcompany.Entity.production.ProductionData;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import com.ERPsystem.miningcompany.service.production.ProductionDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +18,17 @@ public class ProductionDataController {
     @PostMapping
     public ResponseEntity<ProductionData> createProductionData(@RequestBody ProductionData productionData) {
         ProductionData createdProductionData = productionDataService.createProductionData(productionData);
-        return ResponseEntity.ok(createdProductionData);
+        return ResponseEntity.status(201).body(createdProductionData);  // Return status 201 (Created)
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductionData> getProductionDataById(@PathVariable Long id) {
-        Optional<ProductionData> productionData = productionDataService.getProductionDataById(id);
-        return productionData.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> getProductionDataById(@PathVariable Long id) {
+        try {
+            ProductionData productionData = productionDataService.getProductionDataById(id);
+            return ResponseEntity.ok(productionData);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send not found message
+        }
     }
 
     @GetMapping
@@ -32,18 +37,22 @@ public class ProductionDataController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductionData> updateProductionData(@PathVariable Long id, @RequestBody ProductionData updatedProductionData) {
-        ProductionData productionData = productionDataService.updateProductionData(id, updatedProductionData);
-        if (productionData != null) {
+    public ResponseEntity<?> updateProductionData(@PathVariable Long id, @RequestBody ProductionData updatedProductionData) {
+        try {
+            ProductionData productionData = productionDataService.updateProductionData(id, updatedProductionData);
             return ResponseEntity.ok(productionData);
-        } else {
-            return ResponseEntity.notFound().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send not found message
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProductionData(@PathVariable Long id) {
-        productionDataService.deleteProductionData(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteProductionData(@PathVariable Long id) {
+        try {
+            productionDataService.deleteProductionData(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());  // Send not found message
+        }
     }
 }

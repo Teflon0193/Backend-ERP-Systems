@@ -2,6 +2,7 @@ package com.ERPsystem.miningcompany.service.hr;
 
 import com.ERPsystem.miningcompany.Entity.hr.Applicant;
 import com.ERPsystem.miningcompany.Repository.hr.ApplicantRepository;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +18,9 @@ public class ApplicantService {
         return applicantRepository.findAll();
     }
 
-    public Optional<Applicant> getApplicantById(Long id) {
-        return applicantRepository.findById(id);
+    public Applicant getApplicantById(Long id) {
+        return applicantRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Applicant not found for this id :: " + id));
     }
 
     public Applicant createApplicant(Applicant applicant) {
@@ -26,21 +28,19 @@ public class ApplicantService {
     }
 
     public Applicant updateApplicant(Long id, Applicant applicantDetails) {
-        Applicant applicant = applicantRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Applicant not found for this id :: " + id));
+        Applicant existingApplicant = applicantRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Applicant not found for this id :: " + id));
 
-        applicant.setJobPostingId(applicantDetails.getJobPostingId());
-        applicant.setName(applicantDetails.getName());
-        applicant.setResume(applicantDetails.getResume());
-        applicant.setStatus(applicantDetails.getStatus());
+        existingApplicant.setJobPostingId(applicantDetails.getJobPostingId());
+        existingApplicant.setName(applicantDetails.getName());
+        existingApplicant.setResume(applicantDetails.getResume());
+        existingApplicant.setStatus(applicantDetails.getStatus());
 
-        return applicantRepository.save(applicant);
+        return applicantRepository.save(existingApplicant);
     }
-
     public void deleteApplicant(Long id) {
         Applicant applicant = applicantRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Applicant not found for this id :: " + id));
-
+                .orElseThrow(() -> new ResourceNotFoundException("Applicant not found for this id :: " + id));
         applicantRepository.delete(applicant);
     }
 
