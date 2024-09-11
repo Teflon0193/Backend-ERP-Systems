@@ -2,6 +2,7 @@ package com.ERPsystem.miningcompany.service.project;
 
 import com.ERPsystem.miningcompany.Entity.project.Resource;
 import com.ERPsystem.miningcompany.Repository.project.ResourceRepository;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,19 +22,25 @@ public class ResourceService {
         return resourceRepository.findAll();
     }
 
-    public Optional<Resource> getResourceById(Long id) {
-        return resourceRepository.findById(id);
+    public Resource getResourceById(Long id) {
+        return resourceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Resource not found with id " + id));
     }
 
     public Resource updateResource(Long id, Resource resource) {
         if (resourceRepository.existsById(id)) {
             resource.setId(id);
             return resourceRepository.save(resource);
+        } else {
+            throw new ResourceNotFoundException("Resource not found with id " + id);
         }
-        return null;
     }
 
     public void deleteResource(Long id) {
-        resourceRepository.deleteById(id);
+        if (resourceRepository.existsById(id)) {
+            resourceRepository.deleteById(id);
+        } else {
+            throw new ResourceNotFoundException("Resource not found with id " + id);
+        }
     }
 }

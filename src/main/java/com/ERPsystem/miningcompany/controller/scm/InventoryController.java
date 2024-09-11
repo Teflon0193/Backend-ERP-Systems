@@ -1,6 +1,7 @@
 package com.ERPsystem.miningcompany.controller.scm;
 
 import com.ERPsystem.miningcompany.Entity.scm.Inventory;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import com.ERPsystem.miningcompany.service.scm.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,21 +30,33 @@ public class InventoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Inventory> getInventoryById(@PathVariable Long id) {
-        Optional<Inventory> inventory = inventoryService.getInventoryById(id);
-        return inventory.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> getInventoryById(@PathVariable Long id) {
+        try {
+            Inventory inventory = inventoryService.getInventoryById(id);
+            return ResponseEntity.ok(inventory);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Inventory> updateInventory(@PathVariable Long id, @RequestBody Inventory inventory) {
-        Inventory updatedInventory = inventoryService.updateInventory(id, inventory);
-        return updatedInventory != null ? ResponseEntity.ok(updatedInventory) : ResponseEntity.notFound().build();
+    public ResponseEntity<?> updateInventory(@PathVariable Long id, @RequestBody Inventory inventory) {
+        try {
+            Inventory updatedInventory = inventoryService.updateInventory(id, inventory);
+            return ResponseEntity.ok(updatedInventory);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteInventory(@PathVariable Long id) {
-        inventoryService.deleteInventory(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteInventory(@PathVariable Long id) {
+        try {
+            inventoryService.deleteInventory(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package com.ERPsystem.miningcompany.controller.scm;
 
 import com.ERPsystem.miningcompany.Entity.scm.Procurement;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import com.ERPsystem.miningcompany.service.scm.ProcurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,21 +30,33 @@ public class ProcurementController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Procurement> getProcurementById(@PathVariable Long id) {
-        Optional<Procurement> procurement = procurementService.getProcurementById(id);
-        return procurement.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> getProcurementById(@PathVariable Long id) {
+        try {
+            Procurement procurement = procurementService.getProcurementById(id);
+            return ResponseEntity.ok(procurement);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Procurement> updateProcurement(@PathVariable Long id, @RequestBody Procurement procurement) {
-        Procurement updatedProcurement = procurementService.updateProcurement(id, procurement);
-        return updatedProcurement != null ? ResponseEntity.ok(updatedProcurement) : ResponseEntity.notFound().build();
+    public ResponseEntity<?> updateProcurement(@PathVariable Long id, @RequestBody Procurement procurement) {
+        try {
+            Procurement updatedProcurement = procurementService.updateProcurement(id, procurement);
+            return ResponseEntity.ok(updatedProcurement);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProcurement(@PathVariable Long id) {
-        procurementService.deleteProcurement(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteProcurement(@PathVariable Long id) {
+        try {
+            procurementService.deleteProcurement(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
 }

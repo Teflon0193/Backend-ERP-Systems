@@ -1,6 +1,7 @@
 package com.ERPsystem.miningcompany.controller.scm;
 
 import com.ERPsystem.miningcompany.Entity.scm.Shipment;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import com.ERPsystem.miningcompany.service.scm.ShipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,21 +30,33 @@ public class ShipmentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Shipment> getShipmentById(@PathVariable Long id) {
-        Optional<Shipment> shipment = shipmentService.getShipmentById(id);
-        return shipment.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> getShipmentById(@PathVariable Long id) {
+        try {
+            Shipment shipment = shipmentService.getShipmentById(id);
+            return ResponseEntity.ok(shipment);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Shipment> updateShipment(@PathVariable Long id, @RequestBody Shipment shipment) {
-        Shipment updatedShipment = shipmentService.updateShipment(id, shipment);
-        return updatedShipment != null ? ResponseEntity.ok(updatedShipment) : ResponseEntity.notFound().build();
+    public ResponseEntity<?> updateShipment(@PathVariable Long id, @RequestBody Shipment shipment) {
+        try {
+            Shipment updatedShipment = shipmentService.updateShipment(id, shipment);
+            return ResponseEntity.ok(updatedShipment);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteShipment(@PathVariable Long id) {
-        shipmentService.deleteShipment(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteShipment(@PathVariable Long id) {
+        try {
+            shipmentService.deleteShipment(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
 }

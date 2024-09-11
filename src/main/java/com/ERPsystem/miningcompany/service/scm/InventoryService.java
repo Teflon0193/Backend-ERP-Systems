@@ -2,6 +2,7 @@ package com.ERPsystem.miningcompany.service.scm;
 
 import com.ERPsystem.miningcompany.Entity.scm.Inventory;
 import com.ERPsystem.miningcompany.Repository.scm.InventoryRepository;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,20 +23,26 @@ public class InventoryService {
         return inventoryRepository.findAll();
     }
 
-    public Optional<Inventory> getInventoryById(Long id) {
-        return inventoryRepository.findById(id);
+    public Inventory getInventoryById(Long id) {
+        return inventoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Inventory not found with id " + id));
     }
 
     public Inventory updateInventory(Long id, Inventory inventory) {
         if (inventoryRepository.existsById(id)) {
             inventory.setId(id);
             return inventoryRepository.save(inventory);
+        } else {
+            throw new ResourceNotFoundException("Inventory not found with id " + id);
         }
-        return null;
     }
 
     public void deleteInventory(Long id) {
-        inventoryRepository.deleteById(id);
+        if (inventoryRepository.existsById(id)) {
+            inventoryRepository.deleteById(id);
+        } else {
+            throw new ResourceNotFoundException("Inventory not found with id " + id);
+        }
     }
 
 }

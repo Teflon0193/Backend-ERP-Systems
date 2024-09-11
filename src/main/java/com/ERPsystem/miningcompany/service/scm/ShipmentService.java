@@ -2,6 +2,7 @@ package com.ERPsystem.miningcompany.service.scm;
 
 import com.ERPsystem.miningcompany.Entity.scm.Shipment;
 import com.ERPsystem.miningcompany.Repository.scm.ShipmentRepository;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,20 +22,26 @@ public class ShipmentService {
         return shipmentRepository.findAll();
     }
 
-    public Optional<Shipment> getShipmentById(Long id) {
-        return shipmentRepository.findById(id);
+    public Shipment getShipmentById(Long id) {
+        return shipmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Shipment not found with id " + id));
     }
 
     public Shipment updateShipment(Long id, Shipment shipment) {
         if (shipmentRepository.existsById(id)) {
             shipment.setId(id);
             return shipmentRepository.save(shipment);
+        } else {
+            throw new ResourceNotFoundException("Shipment not found with id " + id);
         }
-        return null;
     }
 
     public void deleteShipment(Long id) {
-        shipmentRepository.deleteById(id);
+        if (shipmentRepository.existsById(id)) {
+            shipmentRepository.deleteById(id);
+        } else {
+            throw new ResourceNotFoundException("Shipment not found with id " + id);
+        }
     }
 
 }

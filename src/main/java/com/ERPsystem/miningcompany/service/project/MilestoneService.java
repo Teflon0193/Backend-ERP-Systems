@@ -2,6 +2,7 @@ package com.ERPsystem.miningcompany.service.project;
 
 import com.ERPsystem.miningcompany.Entity.project.Milestone;
 import com.ERPsystem.miningcompany.Repository.project.MilestoneRepository;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +17,9 @@ public class MilestoneService {
         return milestoneRepository.save(milestone);
     }
 
-    public Optional<Milestone> getMilestoneById(Long id) {
-        return milestoneRepository.findById(id);
+    public Milestone getMilestoneById(Long id) {
+        return milestoneRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Milestone not found with id " + id));
     }
 
     public Iterable<Milestone> getAllMilestones() {
@@ -25,7 +27,11 @@ public class MilestoneService {
     }
 
     public void deleteMilestone(Long id) {
-        milestoneRepository.deleteById(id);
+        if (milestoneRepository.existsById(id)) {
+            milestoneRepository.deleteById(id);
+        } else {
+            throw new ResourceNotFoundException("Milestone not found with id " + id);
+        }
     }
 
     public Milestone updateMilestone(Long id, Milestone updatedMilestone) {
@@ -33,7 +39,7 @@ public class MilestoneService {
             updatedMilestone.setId(id);
             return milestoneRepository.save(updatedMilestone);
         } else {
-            return null;
+            throw new ResourceNotFoundException("Milestone not found with id " + id);
         }
     }
 

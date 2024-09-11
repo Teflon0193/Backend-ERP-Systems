@@ -1,6 +1,7 @@
 package com.ERPsystem.miningcompany.controller.project;
 
 import com.ERPsystem.miningcompany.Entity.project.Resource;
+import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import com.ERPsystem.miningcompany.service.project.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,31 +20,43 @@ public class ResourceController {
     @PostMapping
     public ResponseEntity<Resource> createResource(@RequestBody Resource resource) {
         Resource createdResource = resourceService.createResource(resource);
-        return new ResponseEntity<>(createdResource, HttpStatus.CREATED);
+        return ResponseEntity.status(201).body(createdResource);
     }
 
     @GetMapping
     public ResponseEntity<List<Resource>> getAllResources() {
         List<Resource> resources = resourceService.getAllResources();
-        return new ResponseEntity<>(resources, HttpStatus.OK);
+        return ResponseEntity.ok(resources);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Resource> getResourceById(@PathVariable Long id) {
-        Optional<Resource> resource = resourceService.getResourceById(id);
-        return resource.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> getResourceById(@PathVariable Long id) {
+        try {
+            Resource resource = resourceService.getResourceById(id);
+            return ResponseEntity.ok(resource);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Resource> updateResource(@PathVariable Long id, @RequestBody Resource resource) {
-        Resource updatedResource = resourceService.updateResource(id, resource);
-        return updatedResource != null ? ResponseEntity.ok(updatedResource) : ResponseEntity.notFound().build();
+    public ResponseEntity<?> updateResource(@PathVariable Long id, @RequestBody Resource resource) {
+        try {
+            Resource updatedResource = resourceService.updateResource(id, resource);
+            return ResponseEntity.ok(updatedResource);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteResource(@PathVariable Long id) {
-        resourceService.deleteResource(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteResource(@PathVariable Long id) {
+        try {
+            resourceService.deleteResource(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
     }
 
 }
