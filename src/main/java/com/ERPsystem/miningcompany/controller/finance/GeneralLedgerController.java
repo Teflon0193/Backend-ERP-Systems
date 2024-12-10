@@ -51,4 +51,19 @@ public class GeneralLedgerController {
         generalLedgerService.deleteGeneralLedger(id);
         return ResponseEntity.noContent().build();
     }
+
+
+    // Endpoint to get the grand total of debit
+    @GetMapping("/totals/debit")
+    public ResponseEntity<Double> getGrandTotalDebit() {
+        Double totalDebit = generalLedgerService.getGrandTotalDebit();
+        return ResponseEntity.ok(totalDebit);
+    }
+
+    // Endpoint to get the grand total of credit
+    @GetMapping("/totals/credit")
+    public ResponseEntity<Double> getGrandTotalCredit() {
+        Double totalCredit = generalLedgerService.getGrandTotalCredit();
+        return ResponseEntity.ok(totalCredit);
+    }
 }

@@ -5,14 +5,20 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "general_ledger")
 public class GeneralLedger {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String accountName;
-    private String accountType;
-    private Double balance;
+
+    private String accountName;  // Account description (e.g., "Accounts Payable")
+    private String accountCode;  // Account code (e.g., "800")
+    private Double debit;        // Debit amount
+    private Double credit;       // Credit amount
+    @Column(insertable = false, updatable = false)
+    private Double netMovement;  // Net movement (debit - credit)
 
 
+    // Getters and Setters
     public long getId() {
         return id;
     }
@@ -29,19 +35,35 @@ public class GeneralLedger {
         this.accountName = accountName;
     }
 
-    public String getAccountType() {
-        return accountType;
+    public String getAccountCode() {
+        return accountCode;
     }
 
-    public void setAccountType(String accountType) {
-        this.accountType = accountType;
+    public void setAccountCode(String accountCode) {
+        this.accountCode = accountCode;
     }
 
-    public Double getBalance() {
-        return balance;
+    public Double getDebit() {
+        return debit;
     }
 
-    public void setBalance(Double balance) {
-        this.balance = balance;
+    public void setDebit(Double debit) {
+        this.debit = debit;
+    }
+
+    public Double getCredit() {
+        return credit;
+    }
+
+    public void setCredit(Double credit) {
+        this.credit = credit;
+    }
+
+    public Double getNetMovement() {
+        return netMovement;
+    }
+
+    public void setNetMovement(Double netMovement) {
+        this.netMovement = netMovement;
     }
 }
