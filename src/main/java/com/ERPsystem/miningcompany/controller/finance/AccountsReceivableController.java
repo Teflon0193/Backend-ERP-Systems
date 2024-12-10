@@ -51,4 +51,10 @@ public class AccountsReceivableController {
         accountsReceivableService.deleteAccountsReceivable(id);
         return ResponseEntity.noContent().build();
     }
+
+    // Retrieve the grand total of all balances
+    @GetMapping("/grand-total")
+    public Double getGrandTotalBalance() {
+        return accountsReceivableService.getGrandTotalBalance();
+    }
 }

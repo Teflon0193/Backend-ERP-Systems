@@ -31,9 +31,12 @@ public class AccountsReceivableService {
         AccountsReceivable existingAccountsReceivable = accountsReceivableRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("AccountsReceivable not found with id " + id));
 
+        existingAccountsReceivable.setCustomerId(accountsReceivableDetails.getCustomerId());
         existingAccountsReceivable.setCustomerName(accountsReceivableDetails.getCustomerName());
-        existingAccountsReceivable.setAmountDue(accountsReceivableDetails.getAmountDue());
-        existingAccountsReceivable.setDueDate(accountsReceivableDetails.getDueDate());
+        existingAccountsReceivable.setAddress(accountsReceivableDetails.getAddress());
+        existingAccountsReceivable.setContact(accountsReceivableDetails.getContact());
+        existingAccountsReceivable.setBalance(accountsReceivableDetails.getBalance());
+        existingAccountsReceivable.setDatePaid(accountsReceivableDetails.getDatePaid());
 
         return accountsReceivableRepository.save(existingAccountsReceivable);
     }
@@ -43,5 +46,13 @@ public class AccountsReceivableService {
                 .orElseThrow(() -> new ResourceNotFoundException("AccountsReceivable not found with id " + id));
 
         accountsReceivableRepository.delete(accountsReceivable);
+    }
+
+    // Calculate the Grand Total of all balances
+    public Double getGrandTotalBalance() {
+        return accountsReceivableRepository.findAll()
+                .stream()
+                .mapToDouble(AccountsReceivable::getBalance)
+                .sum();
     }
 }
