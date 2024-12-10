@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -50,5 +51,11 @@ public class AccountsPayableController {
     public ResponseEntity<Void> deleteAccountsPayable(@PathVariable Long id) {
         accountsPayableService.deleteAccountsPayable(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Retrieve accounts payable grouped by due date with totals
+    @GetMapping("/grouped-with-totals")
+    public List<Map<String, Object>> getAccountsPayableGroupedWithTotals() {
+        return accountsPayableService.getGroupedByDueDateWithTotals();
     }
 }

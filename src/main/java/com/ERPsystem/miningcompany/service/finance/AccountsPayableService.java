@@ -6,8 +6,8 @@ import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountsPayableService {
@@ -37,7 +37,12 @@ public class AccountsPayableService {
 
         existingAccountsPayable.setSupplierName(accountsPayableDetails.getSupplierName());
         existingAccountsPayable.setAmountOwed(accountsPayableDetails.getAmountOwed());
+        existingAccountsPayable.setBalance(accountsPayableDetails.getBalance());
         existingAccountsPayable.setPaymentDueDate(accountsPayableDetails.getPaymentDueDate());
+        existingAccountsPayable.setInvoiceDateIssued(accountsPayableDetails.getInvoiceDateIssued());
+        existingAccountsPayable.setReference(accountsPayableDetails.getReference());
+        existingAccountsPayable.setTransactionId(accountsPayableDetails.getTransactionId());
+        existingAccountsPayable.setTransactionType(accountsPayableDetails.getTransactionType());
 
         return accountsPayableRepository.save(existingAccountsPayable);
     }
@@ -48,5 +53,32 @@ public class AccountsPayableService {
                 .orElseThrow(() -> new ResourceNotFoundException("AccountsPayable not found with id " + id));
 
         accountsPayableRepository.delete(accountsPayable);
+    }
+
+    // Group accounts payable by due date with totals
+    public List<Map<String, Object>> getGroupedByDueDateWithTotals() {
+        List<AccountsPayable> allRecords = accountsPayableRepository.findAll();
+
+        // Group by due date
+        Map<Date, List<AccountsPayable>> groupedByDueDate = allRecords.stream()
+                .collect(Collectors.groupingBy(AccountsPayable::getPaymentDueDate));
+
+        // Prepare response with totals
+        List<Map<String, Object>> groupedDataWithTotals = new ArrayList<>();
+        for (Map.Entry<Date, List<AccountsPayable>> entry : groupedByDueDate.entrySet()) {
+            Map<String, Object> group = new LinkedHashMap<>();
+            group.put("dueDate", entry.getKey());
+            group.put("accountsPayable", entry.getValue());
+
+            // Calculate total for the group
+            double totalAmount = entry.getValue().stream()
+                    .mapToDouble(AccountsPayable::getAmountOwed)
+                    .sum();
+            group.put("total", totalAmount);
+
+            groupedDataWithTotals.add(group);
+        }
+
+        return groupedDataWithTotals;
     }
 }
