@@ -34,7 +34,15 @@ public class ApplicantService {
         existingApplicant.setJobPostingId(applicantDetails.getJobPostingId());
         existingApplicant.setName(applicantDetails.getName());
         existingApplicant.setResume(applicantDetails.getResume());
-        existingApplicant.setStatus(applicantDetails.getStatus());
+        existingApplicant.setApplicationDate(applicantDetails.getApplicationDate());
+        existingApplicant.setPosition(applicantDetails.getPosition());
+        existingApplicant.setCategory(applicantDetails.getCategory());
+        existingApplicant.setPhase(applicantDetails.getPhase());
+        existingApplicant.setDaysInPhase(applicantDetails.getDaysInPhase());
+        existingApplicant.setMessages(applicantDetails.getMessages());
+        existingApplicant.setEvaluations(applicantDetails.getEvaluations());
+        existingApplicant.setNotes(applicantDetails.getNotes());
+        existingApplicant.setTags(applicantDetails.getTags());
 
         return applicantRepository.save(existingApplicant);
     }

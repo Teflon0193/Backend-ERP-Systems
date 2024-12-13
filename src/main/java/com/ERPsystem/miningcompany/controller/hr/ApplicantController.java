@@ -16,9 +16,10 @@ public class ApplicantController {
     private ApplicantService applicantService;
 
     @GetMapping
-    public List<Applicant> getAllApplicants() {
-        return applicantService.getAllApplicants();
+    public ResponseEntity<List<Applicant>> getAllApplicants() {
+        return ResponseEntity.ok(applicantService.getAllApplicants());
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getApplicantById(@PathVariable Long id) {
