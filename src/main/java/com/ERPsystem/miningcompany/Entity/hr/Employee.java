@@ -1,6 +1,9 @@
 package com.ERPsystem.miningcompany.Entity.hr;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import java.util.List;
 
 @Entity
 @Table(name = "employees")
@@ -8,13 +11,15 @@ public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
     private String certification;
-    private String training;
     private String employmentContract;
+    private String name;
+    private String training;
     private String workSchedule;
 
-
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    private List<Attendance> attendanceRecords;
     public Long getId() {
         return id;
     }
@@ -57,5 +62,13 @@ public class Employee {
     }
     public void setWorkSchedule(String workSchedule) {
         this.workSchedule = workSchedule;
+    }
+
+    public List<Attendance> getAttendanceRecords() {
+        return attendanceRecords;
+    }
+
+    public void setAttendanceRecords(List<Attendance> attendanceRecords) {
+        this.attendanceRecords = attendanceRecords;
     }
 }

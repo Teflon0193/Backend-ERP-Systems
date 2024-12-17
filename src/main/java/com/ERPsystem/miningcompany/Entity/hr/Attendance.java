@@ -1,9 +1,7 @@
 package com.ERPsystem.miningcompany.Entity.hr;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "attendance")
@@ -11,48 +9,41 @@ public class Attendance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long employeeId;
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date date;
-    private Boolean is_present;
-    private Integer hoursWorked;
+
+    @ManyToOne
+    @JoinColumn(name = "employee_id", nullable = false)
+    private Employee employee;
+
+    private LocalDate date;
+    private String shift;
+    private String startTime;
+    private String requiredTime;
+    private String actualTime;
+    private String lateStatus;
 
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Long getEmployeeId() {
-        return employeeId;
-    }
-    public void setEmployeeId(Long employeeId) {
-        this.employeeId = employeeId;
-    }
+    public Employee getEmployee() { return employee; }
+    public void setEmployee(Employee employee) { this.employee = employee; }
 
+    public LocalDate getDate() { return date; }
+    public void setDate(LocalDate date) { this.date = date; }
 
-    public Date getDate() {
-        return date;
-    }
+    public String getShift() { return shift; }
+    public void setShift(String shift) { this.shift = shift; }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+    public String getStartTime() { return startTime; }
+    public void setStartTime(String startTime) { this.startTime = startTime; }
 
-    public Boolean getPresent() {
-        return is_present;
-    }
-    public void setPresent(Boolean present) {
-        is_present = present;
-    }
+    public String getRequiredTime() { return requiredTime; }
+    public void setRequiredTime(String requiredTime) { this.requiredTime = requiredTime; }
 
-    public Integer getHoursWorked() {
-        return hoursWorked;
-    }
-    public void setHoursWorked(Integer hoursWorked) {
-        this.hoursWorked = hoursWorked;
-    }
+    public String getActualTime() { return actualTime; }
+    public void setActualTime(String actualTime) { this.actualTime = actualTime; }
+
+    public String getLateStatus() { return lateStatus; }
+    public void setLateStatus(String lateStatus) { this.lateStatus = lateStatus; }
 }

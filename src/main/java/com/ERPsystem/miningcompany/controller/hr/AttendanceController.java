@@ -1,8 +1,10 @@
 package com.ERPsystem.miningcompany.controller.hr;
 
 import com.ERPsystem.miningcompany.Entity.hr.Attendance;
+import com.ERPsystem.miningcompany.Entity.hr.Employee;
 import com.ERPsystem.miningcompany.controller.ResourceNotFoundException;
 import com.ERPsystem.miningcompany.service.hr.AttendanceService;
+import com.ERPsystem.miningcompany.service.hr.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,46 +17,30 @@ public class AttendanceController {
     @Autowired
     private AttendanceService attendanceService;
 
+    // Retrieve all employees with their attendance records
     @GetMapping
-    public List<Attendance> getAllAttendances() {
-        return attendanceService.getAllAttendances();
+    public ResponseEntity<List<Attendance>> getAllAttendanceRecords() {
+        return ResponseEntity.ok(attendanceService.getAllAttendanceRecords());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getAttendanceById(@PathVariable Long id) {
-        try {
-            Attendance attendance = attendanceService.getAttendanceById(id);
-            return ResponseEntity.ok(attendance);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(e.getMessage());  // Send the exception message
-        }
+    // Add a new attendance record for an employee
+    @PostMapping("/{employeeId}")
+    public ResponseEntity<Attendance> addAttendance(@RequestBody Attendance attendance, @PathVariable Long employeeId) {
+        return ResponseEntity.ok(attendanceService.addAttendance(attendance, employeeId));
     }
 
-    @PostMapping
-    public Attendance createAttendance(@RequestBody Attendance attendance) {
-        return attendanceService.createAttendance(attendance);
+    // Update an existing attendance record
+    @PutMapping("/{attendanceId}")
+    public ResponseEntity<Attendance> updateAttendance(@PathVariable Long attendanceId, @RequestBody Attendance updatedAttendance) {
+        Attendance attendance = attendanceService.updateAttendance(attendanceId, updatedAttendance);
+        return ResponseEntity.ok(attendance);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateAttendance(@PathVariable Long id, @RequestBody Attendance attendanceDetails) {
-        try {
-            Attendance updatedAttendance = attendanceService.updateAttendance(id, attendanceDetails);
-            return ResponseEntity.ok(updatedAttendance);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(e.getMessage());  // Send the exception message
-        }
-    }
-
-
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAttendance(@PathVariable Long id) {
-        try {
-            attendanceService.deleteAttendance(id);
-            return ResponseEntity.noContent().build();
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(404).body(e.getMessage());  // Send the exception message
-        }
+    // Delete an attendance record
+    @DeleteMapping("/{attendanceId}")
+    public ResponseEntity<String> deleteAttendance(@PathVariable Long attendanceId) {
+        attendanceService.deleteAttendance(attendanceId);
+        return ResponseEntity.ok("Attendance record deleted successfully.");
     }
 
 }
