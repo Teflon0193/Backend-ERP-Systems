@@ -14,8 +14,10 @@ public class Employee {
     private String certification;
     private String employmentContract;
     private String name;
+    private String jobTitle;
     private String training;
     private String workSchedule;
+    private String image;
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
@@ -34,6 +36,14 @@ public class Employee {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
     }
 
     public String getCertification() {
@@ -64,6 +74,14 @@ public class Employee {
         this.workSchedule = workSchedule;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     public List<Attendance> getAttendanceRecords() {
         return attendanceRecords;
     }
@@ -71,4 +89,6 @@ public class Employee {
     public void setAttendanceRecords(List<Attendance> attendanceRecords) {
         this.attendanceRecords = attendanceRecords;
     }
+
+
 }

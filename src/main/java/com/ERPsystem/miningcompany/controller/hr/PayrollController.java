@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -19,9 +20,16 @@ public class PayrollController {
     private PayrollService payrollService;
 
     @PostMapping
-    public ResponseEntity<Payroll> createPayroll(@RequestBody Payroll payroll) {
-        Payroll createdPayroll = payrollService.createPayroll(payroll);
-        return ResponseEntity.status(201).body(createdPayroll);  // Created status with payroll
+    public ResponseEntity<?> createPayroll(@RequestBody Payroll payroll, @RequestParam Long employeeId) {
+        try {
+            Payroll createdPayroll = payrollService.createPayroll(payroll, employeeId);
+            return ResponseEntity.ok(createdPayroll);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "message", "An unexpected error occurred.",
+                    "details", e.getMessage()
+            ));
+        }
     }
 
     @GetMapping
@@ -38,6 +46,13 @@ public class PayrollController {
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(404).body(e.getMessage());  // Send exception message
         }
+    }
+
+    // Get payrolls by month
+    @GetMapping("/month")
+    public ResponseEntity<List<Payroll>> getPayrollsByMonth(@RequestParam String month) {
+        List<Payroll> payrolls = payrollService.getPayrollsByMonth(month);
+        return ResponseEntity.ok(payrolls);
     }
 
     @PutMapping("/{id}")

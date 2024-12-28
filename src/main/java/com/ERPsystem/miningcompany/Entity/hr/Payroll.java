@@ -8,14 +8,16 @@ public class Payroll {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long employeeId;
-    private Double salary;
-    private Double bonus;
-    private Double overtime;
-    private Double taxDeduction;
-    private Double insuranceDeduction;
-    private Double otherDeduction;
+    @ManyToOne
+    @JoinColumn(name = "employee_id", nullable = false)
+    private Employee employee;
 
+    private Double baseSalary;
+    private Double commissions;
+    private Double penalties;
+    private Double bonuses;
+    private Double total;
+    private String month; // e.g., "February 2023"
 
     public Long getId() {
         return id;
@@ -25,59 +27,59 @@ public class Payroll {
         this.id = id;
     }
 
-    public Long getEmployeeId() {
-        return employeeId;
+    public Employee getEmployee() {
+        return employee;
     }
 
-    public void setEmployeeId(Long employeeId) {
-        this.employeeId = employeeId;
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 
-    public Double getSalary() {
-        return salary;
+    public Double getBaseSalary() {
+        return baseSalary;
     }
 
-    public void setSalary(Double salary) {
-        this.salary = salary;
+    public void setBaseSalary(Double baseSalary) {
+        this.baseSalary = baseSalary;
     }
 
-    public Double getBonus() {
-        return bonus;
+    public Double getCommissions() {
+        return commissions;
     }
 
-    public void setBonus(Double bonus) {
-        this.bonus = bonus;
+    public void setCommissions(Double commissions) {
+        this.commissions = commissions;
     }
 
-    public Double getOvertime() {
-        return overtime;
+    public Double getPenalties() {
+        return penalties;
     }
 
-    public void setOvertime(Double overtime) {
-        this.overtime = overtime;
+    public void setPenalties(Double penalties) {
+        this.penalties = penalties;
     }
 
-    public Double getTaxDeduction() {
-        return taxDeduction;
+    public Double getBonuses() {
+        return bonuses;
     }
 
-    public void setTaxDeduction(Double taxDeduction) {
-        this.taxDeduction = taxDeduction;
+    public void setBonuses(Double bonuses) {
+        this.bonuses = bonuses;
     }
 
-    public Double getInsuranceDeduction() {
-        return insuranceDeduction;
+    public Double getTotal() {
+        return total;
     }
 
-    public void setInsuranceDeduction(Double insuranceDeduction) {
-        this.insuranceDeduction = insuranceDeduction;
+    public void setTotal(Double total) {
+        this.total = total;
     }
 
-    public Double getOtherDeduction() {
-        return otherDeduction;
+    public String getMonth() {
+        return month;
     }
 
-    public void setOtherDeduction(Double otherDeduction) {
-        this.otherDeduction = otherDeduction;
+    public void setMonth(String month) {
+        this.month = month;
     }
 }

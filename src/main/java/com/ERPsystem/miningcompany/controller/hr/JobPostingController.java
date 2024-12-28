@@ -20,13 +20,13 @@ public class JobPostingController {
     @PostMapping
     public ResponseEntity<JobPosting> createJobPosting(@RequestBody JobPosting jobPosting) {
         JobPosting createdJobPosting = jobPostingService.createJobPosting(jobPosting);
-        return ResponseEntity.status(201).body(createdJobPosting);  // Created status with job posting
+        return ResponseEntity.status(201).body(createdJobPosting);  // Created status
     }
 
     @GetMapping
     public ResponseEntity<List<JobPosting>> getAllJobPostings() {
         List<JobPosting> jobPostings = jobPostingService.getAllJobPostings();
-        return ResponseEntity.ok(jobPostings);  // OK status with job postings list
+        return ResponseEntity.ok(jobPostings);
     }
 
     @GetMapping("/{id}")
