@@ -11,11 +11,14 @@ public class SafetyTraining {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long employeeId;
-    private String trainingProgram;
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date trainingDate;
-    private String certification;
+    private String training_name;
+    @Temporal(TemporalType.DATE)
+    private Date startDate;
+    @Temporal(TemporalType.DATE)
+    private Date endDate;
+    private int duration;
+    private String status;
+    private String certificate;
 
 
     public Long getId() {
@@ -26,35 +29,51 @@ public class SafetyTraining {
         this.id = id;
     }
 
-    public Long getEmployeeId() {
-        return employeeId;
+    public String getTraining_name() {
+        return training_name;
     }
 
-    public void setEmployeeId(Long employeeId) {
-        this.employeeId = employeeId;
+    public void setTraining_name(String training_name) {
+        this.training_name = training_name;
     }
 
-    public String getTrainingProgram() {
-        return trainingProgram;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setTrainingProgram(String trainingProgram) {
-        this.trainingProgram = trainingProgram;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
-    public Date getTrainingDate() {
-        return trainingDate;
+    public Date getEndDate() {
+        return endDate;
     }
 
-    public void setTrainingDate(Date trainingDate) {
-        this.trainingDate = trainingDate;
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
-    public String getCertification() {
-        return certification;
+    public int getDuration() {
+        return duration;
     }
 
-    public void setCertification(String certification) {
-        this.certification = certification;
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getCertificate() {
+        return certificate;
+    }
+
+    public void setCertificate(String certificate) {
+        this.certificate = certificate;
     }
 }

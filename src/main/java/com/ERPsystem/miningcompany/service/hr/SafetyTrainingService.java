@@ -27,13 +27,19 @@ public class SafetyTrainingService {
                 .orElseThrow(() -> new ResourceNotFoundException("SafetyTraining not found with id " + id));
     }
 
+    // Update an existing safety training
     public SafetyTraining updateSafetyTraining(Long id, SafetyTraining safetyTrainingDetails) {
-        if (safetyTrainingRepository.existsById(id)) {
-            safetyTrainingDetails.setId(id);
-            return safetyTrainingRepository.save(safetyTrainingDetails);
-        } else {
-            throw new ResourceNotFoundException("SafetyTraining not found with id " + id);
-        }
+        SafetyTraining safetyTraining = safetyTrainingRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Safety Training not found with id: " + id));
+
+        safetyTraining.setTraining_name(safetyTrainingDetails.getTraining_name());
+        safetyTraining.setStartDate(safetyTrainingDetails.getStartDate());
+        safetyTraining.setEndDate(safetyTrainingDetails.getEndDate());
+        safetyTraining.setDuration(safetyTrainingDetails.getDuration());
+        safetyTraining.setStatus(safetyTrainingDetails.getStatus());
+        safetyTraining.setCertificate(safetyTrainingDetails.getCertificate());
+
+        return safetyTrainingRepository.save(safetyTraining);
     }
 
     public void deleteSafetyTraining(Long id) {

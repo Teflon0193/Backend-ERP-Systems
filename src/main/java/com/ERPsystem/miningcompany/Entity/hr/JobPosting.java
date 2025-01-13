@@ -22,10 +22,10 @@ public class JobPosting {
 
     private String experience;
 
-    @Column(columnDefinition = "TEXT") // For large text content
+    @Column(columnDefinition = "TEXT")
     private String jobDescription;
 
-    @Column(columnDefinition = "TEXT") // For application requirements
+    @Column(columnDefinition = "TEXT")
     private String applicationRequirements;
 
     private LocalDate publishDate; // Auto-generated when the job is created

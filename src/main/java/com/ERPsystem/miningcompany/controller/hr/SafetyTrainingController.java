@@ -26,7 +26,7 @@ public class SafetyTrainingController {
     @GetMapping
     public ResponseEntity<List<SafetyTraining>> getAllSafetyTrainings() {
         List<SafetyTraining> safetyTrainings = safetyTrainingService.getAllSafetyTrainings();
-        return ResponseEntity.ok(safetyTrainings);  // OK status with safetyTrainings list
+        return ResponseEntity.ok(safetyTrainings);
     }
 
     @GetMapping("/{id}")
